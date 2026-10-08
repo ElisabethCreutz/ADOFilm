@@ -1,10 +1,11 @@
-﻿using Spectre.Console;
+﻿using Microsoft.Data.SqlClient;
+using Spectre.Console;
 
 namespace ADOFilm
 {
     public class MainMenu
     {
-        public void RunMenu()
+        public void RunMenu(SqlConnection connection)
         {
             bool isRunning = true;
             var CRUDFilm = new CRUDfilms();
@@ -20,17 +21,17 @@ namespace ADOFilm
                 switch (option)
                 {
                     case "Visa alla Filmer":
-                        CRUDFilm.ReadAllFilms();
+                        CRUDFilm.ReadAllFilms(connection);
                         Console.ReadKey();
                         break;
                     case "Sök film utifrån genre":
                         //osvosv
                         break;
                     case "Lägg till ny film":
-                        CRUDFilm.AddFilm();
+                        CRUDFilm.AddFilm(connection);
                         break;
                     case "Ta bort film":
-                        CRUDFilm.DeleteFilm();
+                        CRUDFilm.DeleteFilm(connection);
                         break;
                     case "Avsluta":
                         isRunning = false;

@@ -5,14 +5,10 @@ namespace ADOFilm
 {
     public class CRUDfilms
     {
-        public string connectionString = "Server=localhost;Database=ADOFilmDb;Trusted_Connection=True;TrustServerCertificate=True;";
 
-        public void ReadAllFilms()
+        public void ReadAllFilms(SqlConnection connection)
         {
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
-
-            string sql = "SELECT Movie.Id, Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
+                        string sql = "SELECT Movie.Id, Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
             using var command = new SqlCommand(sql, connection);
 
             using var reader = command.ExecuteReader();
@@ -25,18 +21,16 @@ namespace ADOFilm
                 string genre = reader.GetString(3);
                 Console.WriteLine($"{id} : {title}, {year}, {genre}");
             }
-            
+
         }
-        public void AddFilm()
+        public void AddFilm(SqlConnection connection)
         {
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
             Console.Write("Namn: ");
             string name = Console.ReadLine()!;
             Console.Write("År: ");
             int year = Convert.ToInt32(Console.ReadLine());
             //TODO:felhantering osv.
-            var genreId = SelectGenre();
+            var genreId = SelectGenre(connection);
             string sqlAdd = "INSERT INTO Movie (Title, Year, GenreId) VALUES (@Title, @Year, @GenreId)";
             using var command = new SqlCommand(sqlAdd, connection);
             command.Parameters.AddWithValue("@Title", name);
@@ -47,10 +41,8 @@ namespace ADOFilm
             Console.ReadKey();
 
         }
-        public int SelectGenre()
+        public int SelectGenre(SqlConnection connection)
         {
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
             Console.WriteLine("Välj genre: ");
             string sqlGenre = "SELECT Id, GenreName FROM Genre";
             using var command = new SqlCommand(sqlGenre, connection);
@@ -66,19 +58,17 @@ namespace ADOFilm
             //TODO: felhantering osv.
             return genreId;
         }
-        public void DeleteFilm()
+        public void DeleteFilm(SqlConnection connection)
         {
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
             var films = new CRUDfilms();
-            films.ReadAllFilms();
+            films.ReadAllFilms(connection);
             Console.WriteLine("Select film to delete. No:");
             var selection = Convert.ToInt32(Console.ReadLine());
             //TODO:felhantering
             string query = "DELETE FROM Movie WHERE Id=@Id";
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@Id", selection);
-            
+
             int rowsAffected = command.ExecuteNonQuery();
             if (rowsAffected == 0)
             {
