@@ -34,7 +34,7 @@ namespace ADOFilm
             string name = Console.ReadLine()!;
             Console.Write("År: ");
             int year = Convert.ToInt32(Console.ReadLine());
-            
+            //TODO:felhantering osv.
             var genreId = SelectGenre();
             string sqlAdd = "INSERT INTO Movie (Title, Year, GenreId) VALUES (@Title, @Year, @GenreId)";
             using var command = new SqlCommand(sqlAdd, connection);
