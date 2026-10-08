@@ -12,19 +12,20 @@ namespace ADOFilm
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
-            string sql = "SELECT Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
+            string sql = "SELECT Movie.Id, Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
             using var command = new SqlCommand(sql, connection);
 
             using var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
-                string title = reader.GetString(0);
-                int year = reader.GetInt32(1);
-                string genre = reader.GetString(2);
-                Console.WriteLine($"{title}, {year}, {genre}");
+                int id = reader.GetInt32(0);
+                string title = reader.GetString(1);
+                int year = reader.GetInt32(2);
+                string genre = reader.GetString(3);
+                Console.WriteLine($"{id} : {title}, {year}, {genre}");
             }
-            Console.ReadKey();
+            
         }
         public void AddFilm()
         {
@@ -67,7 +68,22 @@ namespace ADOFilm
         }
         public void DeleteFilm()
         {
-
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            var films = new CRUDfilms();
+            films.ReadAllFilms();
+            Console.WriteLine("Select film to delete. No:");
+            var selection = Convert.ToInt32(Console.ReadLine());
+            //TODO:felhantering
+            string query = "DELETE FROM Movie WHERE Id=@Id";
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@Id", selection);
+            
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 0)
+            {
+                Console.WriteLine("Filmen finns inte");
+            }
         }
     }
 }

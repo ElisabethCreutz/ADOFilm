@@ -21,6 +21,7 @@ namespace ADOFilm
                 {
                     case "Visa alla Filmer":
                         CRUDFilm.ReadAllFilms();
+                        Console.ReadKey();
                         break;
                     case "Sök film utifrån genre":
                         //osvosv
