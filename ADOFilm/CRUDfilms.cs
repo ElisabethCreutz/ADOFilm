@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Reflection;
 
 namespace ADOFilm
 {
@@ -10,7 +11,6 @@ namespace ADOFilm
         {
             using var connection = new SqlConnection(connectionString);
             connection.Open();
-            //Console.WriteLine("Connected!");
 
             string sql = "SELECT Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
             using var command = new SqlCommand(sql, connection);
@@ -28,7 +28,42 @@ namespace ADOFilm
         }
         public void AddFilm()
         {
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            Console.Write("Namn: ");
+            string name = Console.ReadLine()!;
+            Console.Write("År: ");
+            int year = Convert.ToInt32(Console.ReadLine());
+            
+            var genreId = SelectGenre();
+            string sqlAdd = "INSERT INTO Movie (Title, Year, GenreId) VALUES (@Title, @Year, @GenreId)";
+            using var command = new SqlCommand(sqlAdd, connection);
+            command.Parameters.AddWithValue("@Title", name);
+            command.Parameters.AddWithValue("@Year", year);
+            command.Parameters.AddWithValue("@GenreId", genreId);
+            int rowsAffected = command.ExecuteNonQuery();
+            Console.WriteLine(rowsAffected);
+            Console.ReadKey();
 
+        }
+        public int SelectGenre()
+        {
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            Console.WriteLine("Välj genre: ");
+            string sqlGenre = "SELECT Id, GenreName FROM Genre";
+            using var command = new SqlCommand(sqlGenre, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int id = reader.GetInt32(0);
+                string genreName = reader.GetString(1);
+                Console.WriteLine($"{id} - {genreName}");
+            }
+            Console.Write("Skriv rätt siffra: ");
+            var genreId = Convert.ToInt32(Console.ReadLine());
+            //TODO: felhantering osv.
+            return genreId;
         }
         public void DeleteFilm()
         {
