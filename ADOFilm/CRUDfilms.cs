@@ -30,9 +30,10 @@ namespace ADOFilm
             Console.Write("År: ");
             var year = int.Parse(Console.ReadLine()!);
             var genrelist = _repo.GetGenres();
-            
+          
             var prompt = new SelectionPrompt<Genre>()
                             .Title("Välj genre:")
+                            .UseConverter(genre=>$"{genre.GenreName}")
                             .AddChoices(genrelist);
             var selectedGenre = AnsiConsole.Prompt(prompt);
             var movie = new Movie 
@@ -42,8 +43,9 @@ namespace ADOFilm
         public void DeleteFilm()
         {
             var filmList = _repo.GetAll();
-            var prompt = new SelectionPrompt<Movie>()
+                       var prompt = new SelectionPrompt<Movie>()
                             .Title("Välj film att ta bort:")
+                            .UseConverter(movie=>$"{movie.Title}, {movie.Year}, {movie.GenreName}")
                             .AddChoices(filmList);
             var selectedFilm = AnsiConsole.Prompt(prompt);
             _repo.Delete(selectedFilm.Id);
