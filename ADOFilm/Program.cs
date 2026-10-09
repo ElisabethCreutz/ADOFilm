@@ -17,12 +17,17 @@ namespace ADOFilm
                 services.AddScoped<IMovieRepository, MovieRepository>();
                 services.AddScoped<CRUDfilms>();
                 services.AddScoped<MainMenu>();
+                services.AddSingleton(new DataInitializer(connection));
             })
             .Build();
 
-            using var scope = host.Services.CreateScope();
-            var menu = scope.ServiceProvider.GetRequiredService<MainMenu>();
-            menu.RunMenu();
+            using (var scope = host.Services.CreateScope())
+            {
+                var initializer = scope.ServiceProvider.GetRequiredService<DataInitializer>();
+                initializer.Initialize();
+                var menu = scope.ServiceProvider.GetRequiredService<MainMenu>();
+                menu.RunMenu();
+            }
         }
     }
 }

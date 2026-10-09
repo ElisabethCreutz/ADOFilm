@@ -21,8 +21,7 @@ namespace ADOFilm.Services
         }
         public void AddFilm()
         {
-            Console.Write("Namn: ");
-            var name = Console.ReadLine()!;
+            var name = AnsiConsole.Ask<string>("Namn: ");
             var year = AnsiConsole.Ask<int>("År: ");
             var genrelist = _repo.GetGenres();
 
