@@ -1,6 +1,6 @@
 ﻿using ADOFilm.Models;
 
-namespace ADOFilm
+namespace ADOFilm.Data
 {
     public interface IMovieRepository
     {

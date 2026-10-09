@@ -1,11 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ADOFilm.Services;
 using Spectre.Console;
 
 namespace ADOFilm
 {
     public class MainMenu
     {
-        private readonly CRUDfilms _crud; 
+        private readonly CRUDfilms _crud;
         public MainMenu(CRUDfilms crud) { _crud = crud; }
         public void RunMenu()
         {
@@ -37,7 +37,6 @@ namespace ADOFilm
                         isRunning = false;
                         Console.WriteLine("Tack för besöket!");
                         break;
-
                 }
             }
         }

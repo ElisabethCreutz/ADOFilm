@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace ADOFilm
+namespace ADOFilm.Data
 {
     public interface IDbConnectionFactory
     {

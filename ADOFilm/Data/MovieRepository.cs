@@ -1,13 +1,7 @@
 ﻿using ADOFilm.Models;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
-using static System.Collections.Specialized.BitVector32;
 
-namespace ADOFilm
+namespace ADOFilm.Data
 {
     public class MovieRepository : IMovieRepository
     {
@@ -16,7 +10,6 @@ namespace ADOFilm
         {
             _factory = factory;
         }
-
         public void Add(Movie movie)
         {
             using var connection = _factory.CreateConnection();
@@ -45,7 +38,6 @@ namespace ADOFilm
                 Console.WriteLine("Filmen finns inte");
             }
         }
-
         public IEnumerable<Movie> GetAll()
         {
             var list = new List<Movie>();
@@ -105,6 +97,5 @@ namespace ADOFilm
             }
             return list;
         }
-
     }
 }

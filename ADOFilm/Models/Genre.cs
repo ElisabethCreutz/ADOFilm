@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ADOFilm.Models
+﻿namespace ADOFilm.Models
 {
     public class Genre
     {

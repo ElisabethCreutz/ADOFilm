@@ -1,7 +1,8 @@
-﻿using ADOFilm.Models;
+﻿using ADOFilm.Data;
+using ADOFilm.Models;
 using Spectre.Console;
 
-namespace ADOFilm
+namespace ADOFilm.Services
 {
     public class CRUDfilms
     {
@@ -22,8 +23,7 @@ namespace ADOFilm
         {
             Console.Write("Namn: ");
             var name = Console.ReadLine()!;
-            Console.Write("År: ");
-            var year = int.Parse(Console.ReadLine()!);
+            var year = AnsiConsole.Ask<int>("År: ");
             var genrelist = _repo.GetGenres();
 
             var prompt = new SelectionPrompt<Genre>()
