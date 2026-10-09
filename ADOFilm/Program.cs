@@ -1,4 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
 
 namespace ADOFilm
 {
@@ -6,12 +10,19 @@ namespace ADOFilm
     {
         static void Main(string[] args)
         {
-            string connectionString = "Server=localhost;Database=ADOFilmDb;Trusted_Connection=True;TrustServerCertificate=True;";
-            using var connection = new SqlConnection(connectionString);
-            connection.Open();
+            using IHost host = Host.CreateDefaultBuilder(args).ConfigureServices((context, services) =>
+            {
+                var connection = context.Configuration.GetConnectionString("DefaultConnection");
+                services.AddSingleton<IDbConnectionFactory>(new SqlConnectionFactory(connection));
+                services.AddScoped<IMovieRepository, MovieRepository>();
+                services.AddScoped<CRUDfilms>();
+                services.AddScoped<MainMenu>();
+            })
+            .Build();
 
-            var menu = new MainMenu();
-            menu.RunMenu(connection);
+            using var scope = host.Services.CreateScope();
+            var menu = scope.ServiceProvider.GetRequiredService<MainMenu>();
+            menu.RunMenu();
         }
     }
 }

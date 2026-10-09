@@ -1,79 +1,52 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ADOFilm.Models;
+using Microsoft.Data.SqlClient;
+using Spectre.Console;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace ADOFilm
 {
     public class CRUDfilms
     {
-
-        public void ReadAllFilms(SqlConnection connection)
+        private readonly IMovieRepository _repo;
+        public CRUDfilms(IMovieRepository repo)
         {
-                        string sql = "SELECT Movie.Id, Movie.Title, Movie.Year, Genre.GenreName FROM Movie INNER JOIN Genre ON Movie.GenreId=Genre.Id";
-            using var command = new SqlCommand(sql, connection);
+            _repo = repo;
+        }
 
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
+        public void ReadAllFilms()
+        {
+            foreach (var movie in _repo.GetAll())
             {
-                int id = reader.GetInt32(0);
-                string title = reader.GetString(1);
-                int year = reader.GetInt32(2);
-                string genre = reader.GetString(3);
-                Console.WriteLine($"{id} : {title}, {year}, {genre}");
+                Console.WriteLine($"{movie.Id} : {movie.Title}, {movie.Year}, {movie.GenreName}");
             }
 
+
         }
-        public void AddFilm(SqlConnection connection)
+        public void AddFilm()
         {
             Console.Write("Namn: ");
-            string name = Console.ReadLine()!;
+            var name = Console.ReadLine()!;
             Console.Write("År: ");
-            int year = Convert.ToInt32(Console.ReadLine());
-            //TODO:felhantering osv.
-            var genreId = SelectGenre(connection);
-            string sqlAdd = "INSERT INTO Movie (Title, Year, GenreId) VALUES (@Title, @Year, @GenreId)";
-            using var command = new SqlCommand(sqlAdd, connection);
-            command.Parameters.AddWithValue("@Title", name);
-            command.Parameters.AddWithValue("@Year", year);
-            command.Parameters.AddWithValue("@GenreId", genreId);
-            int rowsAffected = command.ExecuteNonQuery();
-            Console.WriteLine(rowsAffected);
-            Console.ReadKey();
-
+            var year = int.Parse(Console.ReadLine()!);
+            var genrelist = _repo.GetGenres();
+            
+            var prompt = new SelectionPrompt<Genre>()
+                            .Title("Välj genre:")
+                            .AddChoices(genrelist);
+            var selectedGenre = AnsiConsole.Prompt(prompt);
+            var movie = new Movie 
+            { Title = name, Year = year, GenreId = selectedGenre.Id };
+            _repo.Add(movie);
         }
-        public int SelectGenre(SqlConnection connection)
+        public void DeleteFilm()
         {
-            Console.WriteLine("Välj genre: ");
-            string sqlGenre = "SELECT Id, GenreName FROM Genre";
-            using var command = new SqlCommand(sqlGenre, connection);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                int id = reader.GetInt32(0);
-                string genreName = reader.GetString(1);
-                Console.WriteLine($"{id} - {genreName}");
-            }
-            Console.Write("Skriv rätt siffra: ");
-            var genreId = Convert.ToInt32(Console.ReadLine());
-            //TODO: felhantering osv.
-            return genreId;
-        }
-        public void DeleteFilm(SqlConnection connection)
-        {
-            var films = new CRUDfilms();
-            films.ReadAllFilms(connection);
-            Console.WriteLine("Select film to delete. No:");
-            var selection = Convert.ToInt32(Console.ReadLine());
-            //TODO:felhantering
-            string query = "DELETE FROM Movie WHERE Id=@Id";
-            using var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@Id", selection);
-
-            int rowsAffected = command.ExecuteNonQuery();
-            if (rowsAffected == 0)
-            {
-                Console.WriteLine("Filmen finns inte");
-            }
+            var filmList = _repo.GetAll();
+            var prompt = new SelectionPrompt<Movie>()
+                            .Title("Välj film att ta bort:")
+                            .AddChoices(filmList);
+            var selectedFilm = AnsiConsole.Prompt(prompt);
+            _repo.Delete(selectedFilm.Id);
         }
     }
 }

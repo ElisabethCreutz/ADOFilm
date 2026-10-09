@@ -5,10 +5,11 @@ namespace ADOFilm
 {
     public class MainMenu
     {
-        public void RunMenu(SqlConnection connection)
+        private readonly CRUDfilms _crud; 
+        public MainMenu(CRUDfilms crud) { _crud = crud; }
+        public void RunMenu()
         {
             bool isRunning = true;
-            var CRUDFilm = new CRUDfilms();
             while (isRunning)
             {
                 Console.Clear();
@@ -21,17 +22,17 @@ namespace ADOFilm
                 switch (option)
                 {
                     case "Visa alla Filmer":
-                        CRUDFilm.ReadAllFilms(connection);
+                        _crud.ReadAllFilms();
                         Console.ReadKey();
                         break;
                     case "Sök film utifrån genre":
                         //osvosv
                         break;
                     case "Lägg till ny film":
-                        CRUDFilm.AddFilm(connection);
+                        _crud.AddFilm();
                         break;
                     case "Ta bort film":
-                        CRUDFilm.DeleteFilm(connection);
+                        _crud.DeleteFilm();
                         break;
                     case "Avsluta":
                         isRunning = false;
