@@ -23,10 +23,9 @@ namespace ADOFilm
                 {
                     case "Visa alla Filmer":
                         _crud.ReadAllFilms();
-                        Console.ReadKey();
                         break;
                     case "Sök film utifrån genre":
-                        //osvosv
+                        _crud.ReadFilmByGenre();
                         break;
                     case "Lägg till ny film":
                         _crud.AddFilm();
