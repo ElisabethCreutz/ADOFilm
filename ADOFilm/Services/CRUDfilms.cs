@@ -33,7 +33,7 @@ namespace ADOFilm.Services
             var movie = new Movie
             { Title = name, Year = year, GenreId = selectedGenre.Id };
             _repo.Add(movie);
-        }
+                 }
         public void DeleteFilm()
         {
             var filmList = _repo.GetAll();

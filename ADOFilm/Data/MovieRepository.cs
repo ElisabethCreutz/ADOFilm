@@ -20,6 +20,7 @@ namespace ADOFilm.Data
             command.Parameters.AddWithValue("@Title", movie.Title);
             command.Parameters.AddWithValue("@Year", movie.Year);
             command.Parameters.AddWithValue("@GenreId", movie.GenreId);
+            command.ExecuteNonQuery();
         }
 
         public void Delete(int id)
@@ -29,6 +30,7 @@ namespace ADOFilm.Data
             string query = "DELETE FROM Movie WHERE Id=@Id";
             using var command = new SqlCommand(query, (SqlConnection)connection);
             command.Parameters.AddWithValue("@Id", id);
+            command.ExecuteNonQuery();
         }
         public IEnumerable<Movie> GetAll()
         {
